@@ -12,7 +12,7 @@ The assignment requires the project to run in a virtual machine. We will use the
 
 2. Run VirtualBox. Create a new virtual machine using the **Ubuntu ISO**.
 
-3. Create the user profile and define the virtual machine's resources. Once done, start it, install Ubuntu, and re-start the virtual machine.
+3. Create the user profile and define the virtual machine's resources. Once done, start it, install Ubuntu, and restart the virtual machine.
 
 4. Update the package index and upgrade installed packages:
 
@@ -20,10 +20,10 @@ The assignment requires the project to run in a virtual machine. We will use the
    $ sudo apt update && sudo apt upgrade
    ```
 
-5. Install any necessary tools. For example, VirtualBox Guest Additions, or `curl` and `git`:
+5. Install any necessary tools. For example, VirtualBox Guest Additions, or `curl`, `git` and `vim`:
 
    ```sh
-   $ sudo apt install curl git
+   $ sudo apt install curl git vim
    ```
 
 6. Install **Vagrant** ([official documentation here](https://developer.hashicorp.com/vagrant/install#linux)):
@@ -34,14 +34,20 @@ The assignment requires the project to run in a virtual machine. We will use the
    $ sudo apt update && sudo apt install vagrant
    ```
 
-7. Install **k3s** ([official documentation here](https://docs.k3s.io/quick-start)):
+7. Optional:
+
+   If you want to test Kubernetes, you can install **k3s** ([official documentation here](https://docs.k3s.io/quick-start)):
 
    ```sh
    $ curl -sfL https://get.k3s.io | sh -
    ```
 
-8. Install **k3d** ([official documentation here](https://k3d.io/stable/#installation)):
+   And **k3d** ([official documentation here](https://k3d.io/stable/#installation)):
 
    ```sh
    $ curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
    ```
+
+8. Restart the virtual machine.
+
+9. Take a snapshot just in case you need to restore a clean virtual machine.
