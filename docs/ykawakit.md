@@ -3,6 +3,7 @@
 ## Container
 We used debian/bookworm which is the latest stable version as of May 25, 2025.
 [Debian Release Information](https://www.debian.org/releases/)
+[Debian Cloud Image](https://portal.cloud.hashicorp.com/vagrant/discover/debian/bookworm64)
 
 
 ## Vagrant
