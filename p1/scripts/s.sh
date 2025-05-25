@@ -1,6 +1,7 @@
 #!/bin/bash
 
-apt update -y
+sudo apt update -y
+sudo apt install -y curl
 
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s -
 
