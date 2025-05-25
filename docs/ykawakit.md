@@ -33,6 +33,8 @@ export VAGRANT_CWD=/path/to/vagrant/project
 ```bash
 curl -sfL https://get.k3s.io | sh -
 ```
+you can set the following environment variables to customize the installation:
+[env variable](https://docs.k3s.io/reference/env-variables)
 ### Uninstall k3s
 ```bash
 /usr/local/bin/k3s-uninstall.sh

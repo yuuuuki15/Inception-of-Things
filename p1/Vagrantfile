@@ -7,14 +7,24 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "#{username}S" do |s|
-    s.vm.hostname = "#{username}s"
+    s.vm.hostname = "#{username}S"
+    s.vm.provider "virtualbox" do |vb|
+        vb.name = "#{username}S"
+    end
+    s.vm.synced_folder "./shared", "/vagrant/shared", create: true
     s.vm.box = "debian/bookworm64"
     s.vm.network "private_network", ip: "192.168.56.110"
+    s.vm.provision "shell", path: "scripts/s.sh"
   end
 
   config.vm.define "#{username}SW" do |sw|
-    sw.vm.hostname = "#{username}sw"
+    sw.vm.hostname = "#{username}SW"
+    sw.vm.provider "virtualbox" do |vb|
+        vb.name = "#{username}SW"
+    end
+    sw.vm.synced_folder "./shared", "/vagrant/shared"
     sw.vm.box = "debian/bookworm64"
     sw.vm.network "private_network", ip: "192.168.56.111"
+    sw.vm.provision "shell", path: "scripts/sw.sh"
   end
 end
