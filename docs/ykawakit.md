@@ -5,10 +5,9 @@ We used debian/bookworm which is the latest stable version as of May 25, 2025.
 [Debian Release Information](https://www.debian.org/releases/)
 [Debian Cloud Image](https://portal.cloud.hashicorp.com/vagrant/discover/debian/bookworm64)
 
-
 ## Vagrant
 
-### settings
+### Settings
 When you run Vagrant commands, the Vagrantfile settings are loaded and merged in the following order:
 
 1. Packaged Vagrantfile of the machine
@@ -17,65 +16,88 @@ When you run Vagrant commands, the Vagrantfile settings are loaded and merged in
 
 The configuration is merged from 1 to 3, with later settings taking precedence.
 
-----
+### Important Vagrantfile Settings
 
-### VAGRANT_CWD
-VAGRANT_CWD is an environment variable that sets the working directory for Vagrant commands. By default, Vagrant will use the current directory, but you can override this by setting VAGRANT_CWD:
+```ruby
+Vagrant.configure("2") do |config|
+  # This specifies the Vagrant configuration version (v2)
 
-```bash
-export VAGRANT_CWD=/path/to/vagrant/project
+  # Dynamically sets username from system
+  username = `whoami`.strip
+
+  # VirtualBox provider configuration
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048  # Allocates 2GB RAM to each VM
+    vb.cpus = 2       # Allocates 2 CPU cores to each VM
+  end
+
+  # Synced folder options
+  # create: true - creates the directory if it doesn't exist
+  s.vm.synced_folder "./shared", "/vagrant/shared", create: true
+
+  # Private network configuration
+  # ip: sets a static IP address for the VM
+  s.vm.network "private_network", ip: "192.168.56.110"
+end
 ```
 
+## K3S initializing script
+### server installation
+```bash
+export INSTALL_K3S_EXEC="server --flannel-iface=eth1 --write-kubeconfig-mode 644"
+curl -sfL https://get.k3s.io | sh -s -
+```
+Flag explanation:
 
-## k3s
+- server: Installs k3s in server mode
+- --flannel-iface=eth1: Specifies the network interface for Flannel to use (eth1 is our VM private network interface used for VM-to-VM communication)
+- --write-kubeconfig-mode 644: Sets permissions on the kubeconfig file to be readable by all users (644 = rw-r--r--)
 
-### Install k3s
+### agent installation
 ```bash
-curl -sfL https://get.k3s.io | sh -
+export K3S_TOKEN=$(cat /vagrant/shared/node-token)
+export K3S_URL="https://192.168.56.110:6443"
+export INSTALL_K3S_EXEC="--flannel-iface=eth1"
+curl -sfL https://get.k3s.io | sh -s -
 ```
-you can set the following environment variables to customize the installation:
-[env variable](https://docs.k3s.io/reference/env-variables)
-### Uninstall k3s
+environment explanation:
+- K3S_TOKEN: Authentication token for joining the cluster (read from shared token file)
+- K3S_URL: URL of the k3s server to connect to (specifying this makes it install as an agent)
+- INSTALL_K3S_EXEC: Additional flags for the agent installation
+
+### token sharing mechanism
+The token is stored in a shared directory mounted at `/vagrant/shared` on each VM. This allows the server to write the token once, and all agents can read it to join the cluster.
 ```bash
-/usr/local/bin/k3s-uninstall.sh
+# Server side
+sudo cp /var/lib/rancher/k3s/server/node-token /vagrant/shared/node-token
+
+# Agent side
+TIMEOUT=10
+while [ ! -f /vagrant/shared/node-token ] && [ $TIMEOUT -gt 0 ]; do
+    echo "Waiting for node-token to be available..."
+    sleep 1
+    TIMEOUT=$((TIMEOUT - 1))
+done
 ```
-### Check k3s status
+
+### system-wide Aliases and Path configuration
+We set up system-wide aliases and PATH configurations for all users:
 ```bash
-sudo systemctl status k3s
+# Create system-wide alias for kubectl
+echo 'alias k="kubectl"' | sudo tee /etc/profile.d/k3s-aliases.sh
+sudo chmod +x /etc/profile.d/k3s-aliases.sh
+
+# Add /sbin to PATH for all users
+echo "PATH=$PATH" >> /etc/profile.d/k3s-path.sh
 ```
-### Check k3s version
+Details:
+- profile.d directory is loaded by all login shells
+- Files ending in .sh are executed during user login
+- Making these files executable ensures they are properly sourced
+- These changes apply to all users on the system, not just the current user
+
+### networking tools
 ```bash
-k3s --version
+sudo apt install -y net-tools
 ```
-### Check k3s nodes
-```bash
-k3s kubectl get nodes
-```
-### Check k3s pods
-```bash
-k3s kubectl get pods -A
-```
-### Check k3s services
-```bash
-k3s kubectl get services -A
-```
-### Check k3s deployments
-```bash
-k3s kubectl get deployments -A
-```
-### Check k3s namespaces
-```bash
-k3s kubectl get namespaces
-```
-### Check k3s logs
-```bash
-k3s kubectl logs <pod-name> -n <namespace>
-```
-### Check k3s events
-```bash
-k3s kubectl get events -A
-```
-### Check k3s config
-```bash
-k3s kubectl config view
-```
+we can use `ifconfig` to check network interfaces and their configurations. path: "/sbin/ifconfig"
