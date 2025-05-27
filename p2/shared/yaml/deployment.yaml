@@ -1,24 +1,92 @@
+# app1 Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: inception-of-things
-  namespace: inception-of-things
+  name: app1
+  namespace: iot
   labels:
-    app: inception-of-things
-    version: v1.0.0
-    environment: production
-    team: development
-    project: inception-of-things
+    app: app1
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: inception-of-things
+      app: app1
   template:
     metadata:
       labels:
-        app: inception-of-things
+        app: app1
     spec:
       containers:
-      - image: containous/whoami:v1.5.0
-        name: whoami
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        configMap:
+          name: app1-html
+---
+# app2 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2
+  namespace: iot
+  labels:
+    app: app2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app2
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        configMap:
+          name: app2-html
+---
+# app3 Deployment (default)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app3
+  namespace: iot
+  labels:
+    app: app3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app3
+  template:
+    metadata:
+      labels:
+        app: app3
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        configMap:
+          name: app3-html

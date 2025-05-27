@@ -1,20 +1,38 @@
+# app1 Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: inception-of-things
-  namespace: inception-of-things
-  labels:
-    app: inception-of-things
-    version: v1.0.0
-    environment: production
-    team: development
-    project: inception-of-things
+  name: app1-svc
+  namespace: iot
 spec:
   ports:
-    - name: "whoami"
-      port: 18080
-      protocol: TCP
-      targetPort: 80
+  - port: 80
+    targetPort: 80
   selector:
-    app: inception-of-things
-  type: ClusterIP
+    app: app1
+---
+# app2 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2-svc
+  namespace: iot
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: app2
+---
+# app3 Service (default)
+apiVersion: v1
+kind: Service
+metadata:
+  name: app3-svc
+  namespace: iot
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: app3

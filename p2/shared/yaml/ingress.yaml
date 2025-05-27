@@ -1,22 +1,38 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: inception-of-things
-  namespace: inception-of-things
+  name: iot-ingress
+  namespace: iot
   labels:
-    app: inception-of-things
-    version: v1.0.0
-    environment: production
-    team: development
-    project: inception-of-things
+    app: iot
 spec:
   rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: inception-of-things
-                port:
-                  number: 18080
+  - host: app1.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-svc
+            port:
+              number: 80
+  - host: app2.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app2-svc
+            port:
+              number: 80
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app3-svc
+            port:
+              number: 80
