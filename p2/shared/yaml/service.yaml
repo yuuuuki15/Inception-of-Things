@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: inception-of-things
+  namespace: inception-of-things
+  labels:
+    app: inception-of-things
+    version: v1.0.0
+    environment: production
+    team: development
+    project: inception-of-things
+spec:
+  ports:
+    - name: "whoami"
+      port: 18080
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: inception-of-things
+  type: ClusterIP
