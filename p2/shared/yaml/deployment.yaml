@@ -25,6 +25,8 @@ spec:
         env:
         - name: MESSAGE
           value: "This is App1!"
+        - name: KUBERNETES_NAMESPACE
+          value: "iot"
 ---
 # app2 Deployment
 apiVersion: apps/v1
@@ -52,6 +54,8 @@ spec:
         env:
         - name: MESSAGE
           value: "This is App2!"
+        - name: KUBERNETES_NAMESPACE
+          value: "iot"
 ---
 # app3 Deployment (default)
 apiVersion: apps/v1
@@ -79,3 +83,5 @@ spec:
         env:
         - name: MESSAGE
           value: "This is App3! (Default)"
+        - name: KUBERNETES_NAMESPACE
+          value: "iot"
