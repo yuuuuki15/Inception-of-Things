@@ -8,7 +8,9 @@ data:
   index.html: |
     <!DOCTYPE html>
     <html>
-    <head><title>App1</title></head>
+    <head>
+    <title>Hello Kubertenetes!</title>
+    </head>
     <body>
       <h1>This is App1!</h1>
     </body>

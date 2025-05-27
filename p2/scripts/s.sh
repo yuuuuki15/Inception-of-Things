@@ -35,9 +35,9 @@ kubectl apply -f /vagrant/shared/yaml/namespace.yaml
 echo "[INFO]  namespace set up"
 
 # set up configmap
-echo "[INFO]  setting up config map"
-kubectl apply -f /vagrant/shared/yaml/configMap.yaml
-echo "[INFO]  config map set up"
+# echo "[INFO]  setting up config map"
+# kubectl apply -f /vagrant/shared/yaml/configMap.yaml
+# echo "[INFO]  config map set up"
 
 # set up deployment
 echo "[INFO]  setting up deployment"

@@ -7,7 +7,7 @@ metadata:
 spec:
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8080
   selector:
     app: app1
 ---
@@ -20,7 +20,7 @@ metadata:
 spec:
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8080
   selector:
     app: app2
 ---
@@ -33,6 +33,6 @@ metadata:
 spec:
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8080
   selector:
     app: app3
