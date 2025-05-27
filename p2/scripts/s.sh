@@ -23,28 +23,29 @@ sudo ufw allow ssh
 sudo ufw allow 6443/tcp  # Kubernetes API
 sudo ufw allow 8472/udp  # Flannel VXLAN
 sudo ufw allow 10250/tcp # Kubelet metrics
-# sudo ufw allow 2379:2380/tcp # Only needed for HA with embedded etcd
+# sudo ufw allow 2379:2380/tcp # HA(high availability) with embedded etcd(key-value store)
 # Block external access to VXLAN port (if VM has public interface)
 sudo ufw deny in on eth0 to any port 8472
 sudo ufw --force enable
+sudo ufw reload
 echo "[INFO]  Firewall configured"
 
 # set up namespace
-echo "[INFO]  setting up namespace"
-kubectl apply -f /vagrant/shared/yaml/namespace.yaml
-echo "[INFO]  namespace set up"
+# echo "[INFO]  setting up namespace"
+# kubectl apply -f /vagrant/conf/namespace.yaml
+# echo "[INFO]  namespace set up"
 
 # set up deployment
 echo "[INFO]  setting up deployment"
-kubectl apply -f /vagrant/shared/yaml/deployment.yaml
+kubectl apply -f /vagrant/conf/deployment.yaml
 echo "[INFO]  deployment set up"
 
 # set up service
 echo "[INFO]  setting up service"
-kubectl apply -f /vagrant/shared/yaml/service.yaml
+kubectl apply -f /vagrant/conf/service.yaml
 echo "[INFO]  service set up"
 
 # set up ingress
 echo "[INFO]  setting up ingress"
-kubectl apply -f /vagrant/shared/yaml/ingress.yaml
+kubectl apply -f /vagrant/conf/ingress.yaml
 echo "[INFO]  ingress set up"

@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app1
-  namespace: iot
   labels:
     app: app1
 spec:
@@ -33,11 +32,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app2
-  namespace: iot
   labels:
     app: app2
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: app2
@@ -62,7 +60,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app3
-  namespace: iot
   labels:
     app: app3
 spec:
