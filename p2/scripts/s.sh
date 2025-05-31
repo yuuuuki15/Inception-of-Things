@@ -30,22 +30,17 @@ sudo ufw --force enable
 sudo ufw reload
 echo "[INFO]  Firewall configured"
 
-# set up namespace
-# echo "[INFO]  setting up namespace"
-# kubectl apply -f /vagrant/conf/namespace.yaml
-# echo "[INFO]  namespace set up"
-
 # set up deployment
 echo "[INFO]  setting up deployment"
-kubectl apply -f /vagrant/conf/deployment.yaml
+kubectl apply -f /vagrant/confs/deployment.yaml
 echo "[INFO]  deployment set up"
 
 # set up service
 echo "[INFO]  setting up service"
-kubectl apply -f /vagrant/conf/service.yaml
+kubectl apply -f /vagrant/confs/service.yaml
 echo "[INFO]  service set up"
 
 # set up ingress
 echo "[INFO]  setting up ingress"
-kubectl apply -f /vagrant/conf/ingress.yaml
+kubectl apply -f /vagrant/confs/ingress.yaml
 echo "[INFO]  ingress set up"
