@@ -66,7 +66,7 @@ La machine "*Server*" servira de *Server Node* dans Kubernetes, soit de plan de 
      server_vm_name = "mboivinS"
      worker_vm_name = "mboivinSW"
 
-     # Server VM
+     # VM Server
      config.vm.define server_vm_name do |server|
        server.vm.hostname = server_vm_name
        server.vm.network "private_network", ip: "192.168.56.110"
@@ -82,7 +82,7 @@ La machine "*Server*" servira de *Server Node* dans Kubernetes, soit de plan de 
        SHELL
      end
 
-     # Server Worker VM
+     # VM Server Worker
      config.vm.define worker_vm_name do |worker|
        worker.vm.hostname = worker_vm_name
        worker.vm.network "private_network", ip: "192.168.56.111"
@@ -101,7 +101,7 @@ La machine "*Server*" servira de *Server Node* dans Kubernetes, soit de plan de 
    end
    ```
 
-2. Pour tester cette configuration :
+2. Pour vérifier que la configuration a été appliquée, lancer les machines et s'y connecter en SSH :
 
    ```sh
    $ vagrant up
