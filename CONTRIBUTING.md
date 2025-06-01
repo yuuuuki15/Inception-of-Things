@@ -10,19 +10,45 @@ This guide is for anyone willing to contribute to this repository.
 
 This repository uses pre-commit hooks which are **scripts that run before every commit** and are triggered when you run the `git commit` command. In our case, they intend to format and lint the committed files so they stay consistent, and help avoiding YAML errors.
 
-1. Create and activate a new virtual environment:
+Optional: Create and activate a new virtual environment:
 
-   ```sh
-   $ python3 -m venv .venv
-   $ source .venv/bin/activate
-   ```
+```sh
+$ python3 -m venv .venv
+$ source .venv/bin/activate
+```
 
-2. Install dependencies:
+Install dependencies:
 
-   ```sh
-   $ pip3 install -r requirements.txt
-   $ pre-commit install
-   ```
+```sh
+$ pip3 install -r requirements.txt
+```
+
+Install pre-commit:
+
+```sh
+$ pre-commit install
+```
+
+## How To
+
+Activate the Python virtual environment:
+
+```sh
+$ source .venv/bin/activate
+```
+
+Deactivate the Python virtual environment:
+
+```sh
+$ deactivate
+```
+
+Remove the Python virtual environment:
+
+```sh
+$ deactivate
+$ rm -rf .venv
+```
 
 ## Linting and formatting
 
