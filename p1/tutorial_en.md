@@ -141,6 +141,8 @@ The "Server" machine will act as the server node in Kubernetes (control plane). 
    $ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
    ```
 
+6. You can also enable shell auto completion by following these [steps](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#enable-shell-autocompletion).
+
 ## 3. Final Configuration
 
 You can add Kubernetes installation steps to the Vagrantfile using `config.vm.provision`.

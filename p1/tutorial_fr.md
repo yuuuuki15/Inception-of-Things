@@ -141,6 +141,8 @@ La machine "*Server*" servira de *Server Node* dans Kubernetes, soit de plan de 
    $ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
    ```
 
+6. Activer l'auto-complétion de kubectl peut être utile. Suivre les étapes détaillées [ici](https://kubernetes.io/fr/docs/tasks/tools/install-kubectl/#activation-de-l-auto-compl%C3%A9tion-de-shell).
+
 ## 3. Configuration finale
 
 On peut ajouter les étapes d'installation de Kubernetes au Vagrantfile grâce à `config.vm.provision`.
