@@ -1,5 +1,5 @@
 */.vagrant/machines/*
-*/shared/*
+p1/shared/*
 
 # Environments
 .env
