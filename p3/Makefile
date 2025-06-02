@@ -1,8 +1,8 @@
 all: up
 
 create:
-    ./scripts/install.sh
-
+    sudo bash ./scripts/install.sh
+    sudo bash ./scripts/k3d.sh
 
 destroy:
 
