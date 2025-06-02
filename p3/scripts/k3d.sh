@@ -9,7 +9,7 @@ sudo kubectl create namespace argocd
 sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 # create ingress
-sudo kubectl apply -f configs/ingress.yaml
+sudo kubectl apply -n argocd -f configs/ingress.yaml
 
 # get password
 password=$(sudo kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d)
