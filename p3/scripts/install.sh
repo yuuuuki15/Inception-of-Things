@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # install docker
+# doc: https://docs.docker.com/engine/install/debian/
 # ------------------------------------------
 # Add Docker's official GPG key:
 sudo apt-get -y update
@@ -30,6 +31,7 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 # ------------------------------------------
 
 # install k3d
+# doc: https://k3d.io/stable/#installation
 curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
 alias k="kubectl"

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # run k3d
+# doc: https://k3d.io/stable/#quick-start
 sudo k3d cluster create p3 --port 8080:80@loadbalancer
 
 #argocd
