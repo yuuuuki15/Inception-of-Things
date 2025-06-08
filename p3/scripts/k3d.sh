@@ -2,7 +2,7 @@
 
 # run k3d
 # doc: https://k3d.io/stable/#quick-start
-sudo k3d cluster create p3 --port 8080:80@loadbalancer
+sudo k3d cluster create p3 --port 80:80
 
 #argocd
 # doc: https://argo-cd.readthedocs.io/en/stable/getting_started/?_gl=1*ohm18h*_ga*MTc5Nzk0MTUzMS4xNzQ4ODY2MjU0*_ga_5Z1VTPDL73*czE3NDg4NjYyNTQkbzEkZzEkdDE3NDg4NjYyNzckajM3JGwwJGgw
