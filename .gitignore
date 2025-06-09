@@ -1,5 +1,6 @@
 */.vagrant/machines/*
 p1/shared/*
+rgloader
 
 # Environments
 .env
