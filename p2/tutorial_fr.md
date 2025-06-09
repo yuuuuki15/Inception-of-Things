@@ -8,6 +8,7 @@ Dans cette seconde partie, la consigne est de créer une machine virtuelle, de d
 - [Tutoriel](#tutoriel)
    - [1. Création des ressources Kubernetes](#1-création-des-ressources-kubernetes)
    - [2. Application des manifestes](#2-application-des-manifestes)
+   - [3. À la découverte de Helm](#3-à-la-découverte-de-helm)
 - [Ressources](#ressources)
 
 ## Pré-requis
@@ -216,7 +217,13 @@ spec:
    $ vagrant ssh <machine>
    ```
 
-2. On place les fichiers YAML décrivant nos ressources dans le dossier partagé de Vagrant et les applique avec la commande `kubectl apply`. En admettant qu'on ait placé les manifestes dans le dossier `/vagrant/shared/manifests/`, on commence par les déploiements :
+2. On place les fichiers YAML décrivant nos ressources dans le dossier partagé de Vagrant et les applique avec la commande `kubectl apply`. En admettant qu'on ait placé les manifestes dans le dossier `/vagrant/shared/manifests/`, on commence par le namespace :
+
+   ```sh
+   $ kubectl apply -f /vagrant/shared/manifests/namespace.yaml
+   ```
+
+   Puis les déploiements :
 
    ```sh
    $ kubectl apply -f /vagrant/shared/manifests/deployments.yaml
@@ -246,6 +253,55 @@ spec:
    ```
 
    Et/ou ouvrir notre navigateur et visiter `192.168.56.110` en changeant le header `Host`.
+
+### 3. À la découverte de Helm
+
+Cette manière de faire était simple et directe, mais un peu répétitive. Les déploiements et services étaient du copier-coller à peu de choses près. On peut donc tenter d'utiliser Helm pour rendre le tout plus modulaire.
+
+Rappel sur la syntaxe [Go templates](https://pkg.go.dev/text/template) :
+
+| **Syntaxe**   | **Signification**                   |
+| ------------- | ----------------------------------- |
+| `.`           | Contexte actuel                     |
+| `$`           | Contexte global                     |
+| `{{- ... -}}` | Supprime les espaces/sauts de ligne |
+| `range`       | Boucle sur une liste/map            |
+
+1. Un Helm Chart est un package. Pour le créer :
+
+   ```sh
+   $ helm create hello
+   ```
+
+   Nous obtenons cette structure :
+
+   ```
+   hello-chart/
+   ├── Chart.yaml
+   ├── values.yaml
+   └── templates/
+       └── deployment.yaml
+   ```
+
+2. Il n'y a rien ou presque à changer dans `Chart.yaml`, si ce n'est la description du package.
+
+3. Le fichier `Values.yaml` contient les variables de notre projet. Il va servir à centraliser les valeurs qui viendront remplir les déploiements, services et autres ressources. On peut y mettre tout ce qui différait d'un service à l'autre et nous forçait à le copier-coller juste pour changer une valeur comme, par exemple, le nombre de répliques. Cela permet de faire des modifications sans toucher aux autres fichiers YAML.
+
+4. Les déploiements et services sont simplifiés. Plutôt que de répéter trois fois la même chose, à quelques valeurs près, on ne l'écrit qu'une fois et on utilise `range` pour boucler sur les `values` et ainsi générer le YAML.
+
+5. Une fois que tous les templates sont rédigés, on peut installer le projet, ici appelé "hello" :
+
+   ```sh
+   $ helm install hello charts/
+   ```
+
+6. Il est possible de générer le manifeste du projet au format YAML avec la commande suivante :
+
+   ```sh
+   $ helm get manifest hello
+   ```
+
+   Ce qui nous permet de la comparer avec nos fichiers écrits au début du tutoriel et de vérifier qu'ils sont identiques.
 
 ## Ressources
 

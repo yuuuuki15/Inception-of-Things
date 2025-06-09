@@ -1,0 +1,24 @@
+namespace: hello
+
+container:
+  name: hello-kubernetes
+  image: paulbouwer/hello-kubernetes:1.10
+
+apps:
+  - name: app1
+    host: app1.com
+    replicas: 1
+    message: "Hello from app1."
+    containerPort: 8080
+    servicePort: 80
+  - name: app2
+    host: app2.com
+    replicas: 3
+    message: "Hello from app2."
+    containerPort: 8080
+    servicePort: 80
+  - name: app3
+    replicas: 1
+    message: "Hello from app3."
+    containerPort: 8080
+    servicePort: 80

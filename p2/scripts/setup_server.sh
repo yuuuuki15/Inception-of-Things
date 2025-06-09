@@ -19,3 +19,6 @@ echo 'complete -o default -F __start_kubectl k' >>/home/vagrant/.bashrc
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+# Install project
+helm install hello /vagrant/shared/charts/
