@@ -1,10 +1,10 @@
-all: up
-
 up:
 	vagrant up
 
-down:
-	vagrant destroy -f
+reload:
+	vagrant reload
 
-.PHONY: all up down
+destroy:
+	vagrant destroy --force
 
+.PHONY: up
