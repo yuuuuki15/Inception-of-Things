@@ -14,3 +14,8 @@ echo 'source <(kubectl completion bash)' >>/home/vagrant/.bashrc
 echo 'alias k=kubectl' >>/home/vagrant/.bashrc
 # Extend shell completion to work with that alias
 echo 'complete -o default -F __start_kubectl k' >>/home/vagrant/.bashrc
+
+# Install Helm
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
