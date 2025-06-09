@@ -1,19 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
 Vagrant.configure("2") do |config|
-  username = `whoami`.strip
+  config.vm.box = "debian/bookworm64"
+  # Share an additional folder to the guest VM.
+  config.vm.synced_folder "./shared", "/vagrant/shared", create: true
 
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = 2048
-    vb.cpus = 2
-  end
+  server_vm_name = "mboivinS"
+  server_ip_address = "192.168.56.110"
 
-  config.vm.define "#{username}S" do |s|
-    s.vm.hostname = "#{username}S"
-    s.vm.provider "virtualbox" do |vb|
-        vb.name = "#{username}S"
+  # Server VM
+  config.vm.define server_vm_name do |server|
+    server.vm.hostname = server_vm_name
+    server.vm.network "private_network", ip: server_ip_address
+    server.vm.post_up_message = <<-MSG
+------------------------------------------------------
+Server (#{server_ip_address})
+------------------------------------------------------
+    MSG
+
+    # Provider
+    server.vm.provider "virtualbox" do |vb|
+      vb.name = server_vm_name
+      vb.memory = "1792"
+      vb.cpus = "1"
     end
-    s.vm.box = "debian/bookworm64"
-    s.vm.network "private_network", ip: "192.168.56.110"
-    s.vm.provision "shell", path: "scripts/s.sh"
-    s.vm.synced_folder "./confs", "/vagrant/confs", create: true
+    # Installation and configuration at creation
+    server.vm.provision "shell", path: "./scripts/setup_server.sh"
   end
 end
