@@ -37,6 +37,11 @@ sudo ufw --force enable
 sudo ufw reload
 echo "[INFO]  Firewall configured"
 
+# create namespace
+echo "[INFO]  setting up namespace"
+kubectl apply -f /vagrant/confs/namespace.yaml
+echo "[INFO]  namespace set up"
+
 # set up deployment
 echo "[INFO]  setting up deployment"
 kubectl apply -f /vagrant/confs/deployment.yaml
