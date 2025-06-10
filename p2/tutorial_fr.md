@@ -47,10 +47,10 @@ Le namespace :
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: hello
+  name: p2
 ```
 
-Si on veut utiliser ce namespace, il faudra rajouter `namespace: hello` dans les `metadata` de chaque ressource.
+Si on veut utiliser ce namespace, il faudra rajouter `namespace: p2` dans les `metadata` de chaque ressource.
 
 Les déploiements :
 
@@ -59,7 +59,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app1
-  namespace: hello
+  namespace: p2
 spec:
   replicas: 1
   selector:
@@ -83,7 +83,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app2
-  namespace: hello
+  namespace: p2
 spec:
   replicas: 3
   selector:
@@ -107,7 +107,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app3
-  namespace: hello
+  namespace: p2
 spec:
   replicas: 1
   selector:
@@ -135,7 +135,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: app1-svc
-  namespace: hello
+  namespace: p2
 spec:
   ports:
   - port: 80
@@ -147,7 +147,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: app2-svc
-  namespace: hello
+  namespace: p2
 spec:
   ports:
   - port: 80
@@ -159,7 +159,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: app3-svc
-  namespace: hello
+  namespace: p2
 spec:
   ports:
   - port: 80
@@ -174,8 +174,8 @@ Pour finir, afin de rediriger les requêtes vers la bonne application grâce à 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hello-ingress
-  namespace: hello
+  name: p2-ingress
+  namespace: p2
 spec:
   rules:
   - host: app1.com
@@ -270,13 +270,13 @@ Rappel sur la syntaxe [Go templates](https://pkg.go.dev/text/template) :
 1. Un Helm Chart est un package. Pour le créer :
 
    ```sh
-   $ helm create hello
+   $ helm create part2
    ```
 
    Nous obtenons cette structure :
 
    ```
-   hello-chart/
+   charts/
    ├── Chart.yaml
    ├── values.yaml
    └── templates/
@@ -289,16 +289,16 @@ Rappel sur la syntaxe [Go templates](https://pkg.go.dev/text/template) :
 
 4. Les déploiements et services sont simplifiés. Plutôt que de répéter trois fois la même chose, à quelques valeurs près, on ne l'écrit qu'une fois et on utilise `range` pour boucler sur les `values` et ainsi générer le YAML.
 
-5. Une fois que tous les templates sont rédigés, on peut installer le projet, ici appelé "hello" :
+5. Une fois que tous les templates sont rédigés, on peut installer le projet, ici appelé "part2" :
 
    ```sh
-   $ helm install hello charts/
+   $ helm install part2 charts/
    ```
 
 6. Il est possible de générer le manifeste du projet au format YAML avec la commande suivante :
 
    ```sh
-   $ helm get manifest hello
+   $ helm get manifest part2
    ```
 
    Ce qui nous permet de la comparer avec nos fichiers écrits au début du tutoriel et de vérifier qu'ils sont identiques.

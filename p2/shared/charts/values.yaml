@@ -1,4 +1,4 @@
-namespace: hello
+namespace: p2
 
 container:
   name: hello-kubernetes
