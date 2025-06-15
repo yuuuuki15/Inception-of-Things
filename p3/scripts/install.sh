@@ -1,5 +1,23 @@
 #!/bin/bash
 
+# check installation
+
+check_installation() {
+    local missing=()
+    for cmd in "$@"; do
+        if ! command -v "$cmd" &> /dev/null; then
+            missing+=("$cmd")
+        fi
+    done
+    if [ ${#missing[@]} -ne 0 ]; then
+        echo "Missing commands: ${missing[*]}"
+        return 1
+    else
+        echo "All commands are installed"
+        return 0
+    fi
+}
+
 # install docker
 # ------------------------------------------
 check_docker_installation() {
@@ -41,6 +59,7 @@ install_docker() {
     # install latest docker engine
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 }
+
 if ! check_docker_installation; then
     echo "Docker is not installed or not working correctly. Installing Docker..."
     install_docker
@@ -90,24 +109,12 @@ else
 fi
 # ------------------------------------------
 
-echo 'alias k="kubectl"' | sudo tee /etc/profile.d/k3s-aliases.sh
-sudo chmod +x /etc/profile.d/k3s-aliases.sh
-
-
-# check installation
-
-check_installation() {
-    local missing=()
-    for cmd in "$@"; do
-        if ! command -v "$cmd" &> /dev/null; then
-            missing+=("$cmd")
-        fi
-    done
-    if [ ${#missing[@]} -ne 0 ]; then
-        echo "Missing commands: ${missing[*]}"
-        return 1
-    else
-        echo "All commands are installed"
-        return 0
-    fi
-}
+# alias kubectl to k
+if ! command -v k &> /dev/null; then
+    echo "Creating alias 'k' for kubectl..."
+    echo 'alias k="kubectl"' | sudo tee /etc/profile.d/k3s-aliases.sh
+    sudo chmod +x /etc/profile.d/k3s-aliases.sh
+    source /etc/profile.d/k3s-aliases.sh
+else
+    echo "Alias 'k' for kubectl already exists."
+fi
