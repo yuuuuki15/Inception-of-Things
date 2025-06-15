@@ -25,7 +25,7 @@ Dans cette seconde partie, la consigne est de créer une machine virtuelle, de d
    $ cd p2
    ```
 
-2. Reprendre le Vagrantfile et le script d'installation de la machine *Server* pour cette partie.
+2. Reprendre le Vagrantfile et le script d'installation de la machine *Server* de la [partie 1](/p1/tutorial_fr.md).
 
 ### 1. Définition des ressources Kubernetes
 
