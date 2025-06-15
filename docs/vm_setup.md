@@ -59,6 +59,12 @@ The assignment requires the project to run in a virtual machine. We will use the
    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
    ```
 
+   Add the user to the Docker group:
+
+   ```sh
+   $ sudo usermod -a -G docker $USER
+   ```
+
 8. To install **k3d**, follow the [official documentation](https://k3d.io/stable/#installation):
 
    ```sh
