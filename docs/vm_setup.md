@@ -34,20 +34,39 @@ The assignment requires the project to run in a virtual machine. We will use the
    $ sudo apt update && sudo apt install vagrant
    ```
 
-7. Optional:
+7. Install **Docker**. The following steps come from the [official installation guide for Ubuntu](https://docs.docker.com/engine/install/ubuntu/).
 
-   If you want to test Kubernetes, you can install **k3s** ([official documentation here](https://docs.k3s.io/quick-start)):
+   Set up Docker's `apt` repository:
 
    ```sh
-   $ curl -sfL https://get.k3s.io | sh -
+   # Add Docker's official GPG key:
+   sudo apt-get update
+   sudo apt-get install ca-certificates curl
+   sudo install -m 0755 -d /etc/apt/keyrings
+   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+   sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+   # Add the repository to Apt sources:
+   echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
    ```
 
-   And **k3d** ([official documentation here](https://k3d.io/stable/#installation)):
+   Install the Docker packages:
+   ```sh
+   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+   ```
+
+8. To install **k3d**, follow the [official documentation](https://k3d.io/stable/#installation):
 
    ```sh
    $ curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
    ```
 
-8. Restart the virtual machine.
+9. Stop the virtual machine.
 
-9. Take a snapshot just in case you need to restore a clean virtual machine.
+10. In the marchine's settings > System > Processor, check "Enable Nested VT-x/AMD-V" to enable nested virtualization.
+
+11. Take a **snapshot** just in case you need to restore a clean virtual machine.
