@@ -22,3 +22,9 @@ chmod 700 get_helm.sh
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 # Install project
 helm install hello /vagrant/shared/charts/
+
+export PATH=${PATH}:/sbin
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+echo "PATH=$PATH" >> /etc/profile.d/k3s-env.sh
+echo "KUBECONFIG=$KUBECONFIG" >> /etc/profile.d/k3s-env.sh
