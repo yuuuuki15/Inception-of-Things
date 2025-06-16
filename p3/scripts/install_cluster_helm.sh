@@ -5,10 +5,10 @@
 set -e
 
 # Create cluster
-k3d cluster create p3 --agents 2
+sudo k3d cluster create p3 --agents 2
 # Create namespaces
-kubectl create namespace argocd
-kubectl create namespace dev
+sudo kubectl create namespace argocd
+sudo kubectl create namespace dev
 
 # Add Argo CD Helm repository
 helm repo add argo https://argoproj.github.io/argo-helm
