@@ -1,9 +1,12 @@
 all: up
 
 create:
-    ./scripts/install.sh
-
+	bash ./scripts/check_sudo.sh
+	sudo bash ./scripts/install.sh
+	sudo bash ./scripts/install_cluster_helm.sh
 
 destroy:
+	bash ./scripts/check_sudo.sh
+	sudo bash ./scripts/uninstall.sh
 
 .PHONY: all create destroy
