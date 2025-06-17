@@ -118,3 +118,26 @@ if ! command -v k &> /dev/null; then
 else
     echo "Alias 'k' for kubectl already exists."
 fi
+
+# ------------------------------------------
+# install helm
+# doc: https://helm.sh/docs/intro/install/
+install_helm() {
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+    rm ./get_helm.sh
+
+    echo "✅ Helm"
+}
+
+if ! check_installation helm; then
+    echo "Helm is not installed. Installing Helm..."
+    install_helm
+    if ! check_installation helm; then
+        echo "Helm installation failed. Exiting."
+        exit 1
+    fi
+else
+    echo "Helm is already installed."
+fi
