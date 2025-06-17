@@ -39,5 +39,5 @@ echo "Argo CD is now accessible at https://localhost:8081"
 echo "You can log in with the username 'admin' and the password \"$password\"."
 
 # Port forward Argo CD server to localhost
-# we're using port 8081 to avoid conflict with the default port 8080(ssh)
+# we're using port 8081 to avoid conflict with the default port 8080(loadbalancer)
 sudo kubectl port-forward service/argocd-server -n argocd 8081:443
