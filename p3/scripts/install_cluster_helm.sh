@@ -29,17 +29,15 @@ while true; do
 done
 
 # Create Ingress
-sudo kubectl apply -f manifests/ingress.yaml --namespace argocd
+sudo kubectl apply -f configs/ingress.yaml --namespace argocd
 
 # get password
 password=$(sudo kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d)
 
 # login
-echo "password: $password"
+echo "Argo CD is now accessible at https://localhost:8081"
+echo "You can log in with the username 'admin' and the password \"$password\"."
 
 # Port forward Argo CD server to localhost
 # we're using port 8081 to avoid conflict with the default port 8080(ssh)
 sudo kubectl port-forward service/argocd-server -n argocd 8081:443
-
-echo "Argo CD is now accessible at https://localhost:8081"
-echo "You can log in with the username 'admin' and the password \"$password\"."
