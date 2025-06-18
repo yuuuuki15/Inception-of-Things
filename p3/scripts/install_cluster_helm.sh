@@ -4,11 +4,8 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Create cluster
-sudo k3d cluster create p3 --agents 2 -p "8080:80@loadbalancer"
 # Create namespaces
 sudo kubectl create namespace argocd
-sudo kubectl create namespace dev
 
 # Add Argo CD Helm repository
 sudo helm repo add argo https://argoproj.github.io/argo-helm
