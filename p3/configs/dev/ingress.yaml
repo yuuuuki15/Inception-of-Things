@@ -5,7 +5,9 @@ metadata:
     labels:
         app: argocd
     annotations:
-        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        ingress.kubernetes.io/ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
     rules:
         - http:
