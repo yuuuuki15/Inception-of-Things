@@ -12,7 +12,15 @@ sudo helm repo update
 sudo helm install argocd argo/argo-cd --namespace argocd
 
 # Wait for argocd server to be ready
-sudo kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s
+while true; do
+    number_of_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running" | wc -l)
+    if [ $number_of_pods = "7" ]; then
+        echo "Argocd server is ready."
+        break
+    fi
+    echo "($number_of_pods/7) Waiting for Argo CD server to be ready..."
+    sleep 5
+done
 
 # Create Ingress
 sudo kubectl apply -f configs/ingress.yaml --namespace argocd
@@ -26,4 +34,4 @@ echo "You can log in with the username 'admin' and the password \"$password\"."
 
 # Port forward Argo CD server to localhost
 # we're using port 8081 to avoid conflict with the default port 8080(loadbalancer)
-sudo kubectl port-forward service/argocd-server -n argocd 8081:443
+sudo kubectl port-forward service/argocd-server -n argocd 8081:443 &

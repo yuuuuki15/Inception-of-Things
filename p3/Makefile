@@ -4,8 +4,8 @@ create:
 	bash ./scripts/check_sudo.sh
 	sudo bash ./scripts/install.sh
 	sudo bash ./scripts/k3d.sh
-	sudo bash ./scripts/dev.sh
 	sudo bash ./scripts/install_cluster_helm.sh
+	sudo bash ./scripts/dev.sh
 
 destroy:
 	bash ./scripts/check_sudo.sh
