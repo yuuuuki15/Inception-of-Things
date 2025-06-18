@@ -4,9 +4,6 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Create namespaces
-sudo kubectl create namespace argocd
-
 # Add Argo CD Helm repository
 sudo helm repo add argo https://argoproj.github.io/argo-helm
 # Update information of available charts locally from chart repositories
