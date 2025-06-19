@@ -12,10 +12,17 @@ sudo kubectl create namespace dev
 
 # Add Argo CD Helm repository
 sudo helm repo add argo https://argoproj.github.io/argo-helm
+# Add Nginx Helm repository
+sudo helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
 # Update information of available charts locally from chart repositories
 sudo helm repo update
+
 # Install Argo CD
 sudo helm install argocd argo/argo-cd --namespace argocd
+# Install Nginx
+sudo helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
 
 # Wait for argocd server to be ready
 while true; do
