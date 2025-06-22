@@ -18,7 +18,7 @@ install_utils() {
     sudo apt update
     sudo apt install curl git vim
 
-    echo "✅ dependencies"
+    echo "✅ Installed dependencies."
 }
 
 install_docker() {
@@ -41,7 +41,7 @@ install_docker() {
     # Add the user to the Docker group
     sudo usermod -a -G docker $USER
 
-    echo "✅ Docker"
+    echo "✅ Installed and configured Docker."
 }
 
 install_kubectl() {
@@ -54,13 +54,13 @@ install_kubectl() {
     echo 'alias k=kubectl' >>~/.bashrc
     echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
 
-    echo "✅ Installed kubectl"
+    echo "✅ Installed and configured kubectl."
 }
 
 install_k3d() {
     curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
-    echo "✅ k3d"
+    echo "✅ Installed k3d."
 }
 
 install_helm() {
@@ -69,7 +69,7 @@ install_helm() {
     ./get_helm.sh
     rm ./get_helm.sh
 
-    echo "✅ Helm"
+    echo "✅ Installed Helm."
 }
 
 check_success install_utils
