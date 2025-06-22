@@ -1,8 +1,6 @@
 create:
-	k3d cluster create p3 --agents 2 -p "8080:80@loadbalancer"
-	kubectl create namespace argocd
-	helm repo add argo https://argoproj.github.io/argo-helm
-	helm repo update
+	bash ./p3/scripts/setup_vm.sh
+	bash ./p3/scripts/install_cluster.sh
 
 clean_argo:
 	kubectl delete pods --all --namespace argocd
