@@ -5,10 +5,13 @@
 set -e
 
 ARGOCD_HOSTNAME=argocd.local
-CLUSTER_PORT=8080
+ARGOCD_PORT=8080
+PLAYGROUND_PORT=8888
 
 create_k3d_cluster() {
-    sudo k3d cluster create p3 -p "$CLUSTER_PORT:80@loadbalancer"
+    sudo k3d cluster create p3 \
+        -p "$ARGOCD_PORT:80@loadbalancer" \
+        -p "$PLAYGROUND_PORT:80@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     echo "✅ Created k3d cluster."
@@ -67,7 +70,7 @@ display_help() {
 
     echo -e "In order to access the server UI:
 
-    1. Open the browser on http://$ARGOCD_HOSTNAME:$CLUSTER_PORT
+    1. Open the browser on http://$ARGOCD_HOSTNAME:$ARGOCD_PORT
 
     2. Log in with 'admin:$argocd_password'\n\n"
 }
@@ -76,7 +79,7 @@ connect_to_argocd() {
     echo "⌛ Connect to Argo CD server with CLI ..."
     argocd_password=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 
-    argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$CLUSTER_PORT
+    argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$ARGOCD_PORT
 }
 
 create_k3d_cluster
