@@ -27,13 +27,6 @@ install_argocd(){
         --set server.ingress.enabled=true \
         --set configs.params."server\.insecure"=true
 
-    # Install Argo CD CLI
-    argocd_version=v3.0.6
-    echo "⌛ Downloading Argo CD  command-line tool ..."
-    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$argocd_version/argocd-linux-amd64
-    sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-    rm argocd-linux-amd64
-
     echo "✅ Installed Argo CD."
 }
 
@@ -73,6 +66,16 @@ display_help() {
     1. Open the browser on http://$ARGOCD_HOSTNAME:$ARGOCD_PORT
 
     2. Log in with 'admin:$argocd_password'\n\n"
+}
+
+install_argocd_cli(){
+    argocd_version=v3.0.6
+    echo "⌛ Downloading Argo CD command-line tool ..."
+    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$argocd_version/argocd-linux-amd64
+    sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+    rm argocd-linux-amd64
+
+    echo "✅ Installed Argo CD CLI."
 }
 
 connect_to_argocd() {
