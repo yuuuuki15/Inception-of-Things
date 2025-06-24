@@ -1,11 +1,15 @@
 create:
-	bash ./scripts/setup_vm.sh
-	bash ./scripts/install_cluster.sh
+	bash ./scripts/check_sudo.sh
+	sudo bash ./scripts/setup_vm.sh
+	sudo bash ./scripts/install_cluster.sh
 
 clean_argo:
-	kubectl delete pods --all --namespace argocd
+	bash ./scripts/check_sudo.sh
+	sudo kubectl delete pods --all --namespace argocd
 
 clean:
-	kubectl delete pods --all --all-namespaces
+	bash ./scripts/check_sudo.sh
+	sudo kubectl delete pods --all --all-namespaces
+	sudo bash ./scripts/uninstall.sh
 
 .PHONY: create clean_argo clean
