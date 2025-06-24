@@ -93,3 +93,5 @@ check_argocd_is_ready
 create_argocd_ingress
 # Install playground web application
 install_web_app
+
+display_help
