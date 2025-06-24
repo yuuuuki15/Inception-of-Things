@@ -5,12 +5,13 @@
 set -e
 
 ARGOCD_HOSTNAME=argocd.local
-ARGOCD_CONFIG_PATH=manifests/argocd
-PORT=8888
+ARGOCD_PORT=8080
+PLAYGROUND_PORT=8888
 
 create_k3d_cluster() {
     sudo k3d cluster create p3 \
-        -p "$PORT:80@loadbalancer"
+        -p "$ARGOCD_PORT:80@loadbalancer" \
+        -p "$PLAYGROUND_PORT:8888@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     echo "✅ Created k3d cluster."
@@ -24,15 +25,7 @@ install_argocd(){
     sudo helm upgrade --install argocd argo/argo-cd \
         --namespace argocd \
         --set server.ingress.enabled=true \
-        --set configs.params."server\.insecure"=true \
-        -f ./$ARGOCD_CONFIG_PATH/argocd-values.yaml
-
-    # Update admin password
-    sudo kubectl -n argocd patch secret argocd-secret \
-        -p '{"stringData":  {
-            "admin.password": "$2a$12$My3bM7RP8GTfgQyZr./ujuzxBSAul4q1vC1OG8lfPAyVsIx7aCq.6",
-            "admin.passwordMtime": "'$(date +%FT%T%Z)'"
-        }}'
+        --set configs.params."server\.insecure"=true
 
     echo "✅ Installed Argo CD."
 }
@@ -52,7 +45,7 @@ check_argocd_is_ready() {
 }
 
 create_argocd_ingress() {
-    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_ingress.yaml --namespace argocd
+    sudo kubectl apply -f ./manifests/argocd_ingress.yaml --namespace argocd
     # Add hostname to hosts
     echo "127.0.0.1 $ARGOCD_HOSTNAME" | sudo tee -a /etc/hosts
 
@@ -61,11 +54,8 @@ create_argocd_ingress() {
 
 install_web_app(){
     echo "⌛ Create Argo CD 'development' project and 'playground' application."
-    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_projects.yaml
-    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_apps.yaml
-    sudo kubectl apply -f ./manifests/playground_ingress.yaml
-
-    echo "✅ Setup application."
+    sudo kubectl apply -f ./manifests/project_development.yaml
+    sudo kubectl apply -f ./manifests/app_playground.yaml
 }
 
 display_help() {
@@ -73,9 +63,9 @@ display_help() {
 
     echo -e "In order to access the server UI:
 
-    1. Open the browser on http://$ARGOCD_HOSTNAME:$PORT
+    1. Open the browser on http://$ARGOCD_HOSTNAME:$ARGOCD_PORT
 
-    2. Log in with 'admin' as username and ask the password to the students. :)\n\n"
+    2. Log in with 'admin:$argocd_password'\n\n"
 }
 
 install_argocd_cli(){
@@ -88,6 +78,13 @@ install_argocd_cli(){
     echo "✅ Installed Argo CD CLI."
 }
 
+connect_to_argocd() {
+    echo "⌛ Connect to Argo CD server with CLI ..."
+    argocd_password=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+
+    argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$ARGOCD_PORT
+}
+
 create_k3d_cluster
 install_argocd
 # Wait for Argo CD server to be ready
@@ -96,4 +93,5 @@ check_argocd_is_ready
 create_argocd_ingress
 # Install playground web application
 install_web_app
+
 display_help
