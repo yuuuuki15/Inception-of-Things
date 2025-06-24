@@ -11,7 +11,7 @@ PLAYGROUND_PORT=8888
 create_k3d_cluster() {
     sudo k3d cluster create p3 \
         -p "$ARGOCD_PORT:80@loadbalancer" \
-        -p "$PLAYGROUND_PORT:80@loadbalancer"
+        -p "$PLAYGROUND_PORT:$PLAYGROUND_PORT@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     echo "✅ Created k3d cluster."
