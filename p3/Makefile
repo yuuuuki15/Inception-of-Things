@@ -1,14 +1,15 @@
-all: create
-
 create:
 	bash ./scripts/check_sudo.sh
-	sudo bash ./scripts/install.sh
-	sudo bash ./scripts/k3d.sh
-	sudo bash ./scripts/install_cluster_helm.sh
-	sudo bash ./scripts/dev.sh
+	sudo bash ./scripts/setup_vm.sh
+	sudo bash ./scripts/install_cluster.sh
 
-destroy:
+clean_argo:
 	bash ./scripts/check_sudo.sh
+	sudo kubectl delete pods --all --namespace argocd
+
+clean:
+	bash ./scripts/check_sudo.sh
+	sudo kubectl delete pods --all --all-namespaces
 	sudo bash ./scripts/uninstall.sh
 
-.PHONY: all create destroy
+.PHONY: create clean_argo clean
