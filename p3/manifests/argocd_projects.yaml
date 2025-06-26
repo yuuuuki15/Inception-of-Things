@@ -1,3 +1,7 @@
+# This is a Kubernetes Custom Resource of kind "AppProject", defined
+# by Argo CD via a CRD (Custom Resource Definition).
+# It is used to group and manage related Argo CD Applications, setting
+# policies, destinations, and source repos.
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
