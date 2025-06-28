@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+    name: development
+    namespace: argocd
+spec:
+    description: Deploy playground applications
+    sourceRepos:
+        - https://github.com/yuuuuki15/*
+    # Only permit applications to deploy to the 'dev' namespace
+    destinations:
+        - name: in-cluster
+          namespace: dev
+          server: https://kubernetes.default.svc
