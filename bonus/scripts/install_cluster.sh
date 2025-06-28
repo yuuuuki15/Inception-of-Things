@@ -17,6 +17,7 @@ create_k3d_cluster() {
         -p "$PLAYGROUND_PORT:8888@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
+    sudo kubectl create namespace gitlab
     echo "✅ Created k3d cluster."
 }
 
@@ -88,6 +89,51 @@ connect_to_argocd() {
     argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$ARGOCD_PORT
 }
 
+install_gitlab() {
+    helm repo add gitlab https://charts.gitlab.io/
+    helm repo update
+    helm upgrade --install gitlab gitlab/gitlab \
+    --namespace gitlab \
+    --timeout 600s \
+    --set global.hosts.domain=$GITLAB_HOSTNAME \
+    --set global.hosts.externalIP=10.10.10.10 \
+    --set certmanager-issuer.email=me@$GITLAB_HOSTNAME
+
+    echo "✅ Installed GitLab."
+}
+
+check_gitlab_is_ready() {
+    echo "⌛ Wait for GitLab pods to be running ..."
+
+    while true; do
+        number_of_pods=$(sudo kubectl get pods -n gitlab | awk '{print $3}' | grep "Running" | wc -l)
+        if [ $number_of_pods = "5" ]; then
+            echo "✅ GitLab server is ready."
+            break
+        fi
+        echo "$number_of_pods/5 pods are running ..."
+        sleep 5
+    done
+}
+
+create_gitlab_ingress() {
+    sudo kubectl apply -f ./manifests/gitlab_ingress.yaml --namespace gitlab
+    # Add hostname to hosts
+    echo "127.0.0.1 $GITLAB_HOSTNAME" | sudo tee -a /etc/hosts
+
+    echo "✅ Setup Ingress for GitLab."
+}
+
+display_gitlab_help() {
+    gitlab_password=$(sudo kubectl -n gitlab get secret gitlab-initial-root-password -o jsonpath="{.data.password}" | base64 -d)
+
+    echo -e "In order to access the GitLab server UI:
+
+    1. Open the browser on http://$GITLAB_HOSTNAME:$GITLAB_PORT
+
+    2. Log in with 'root:$gitlab_password'\n\n"
+}
+
 create_k3d_cluster
 install_argocd
 # Wait for Argo CD server to be ready
@@ -98,3 +144,9 @@ create_argocd_ingress
 install_web_app
 
 display_help
+
+install_gitlab
+
+check_gitlab_is_ready
+
+display_gitlab_help
