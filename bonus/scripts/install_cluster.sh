@@ -14,7 +14,8 @@ GITLAB_PORT=8081
 create_k3d_cluster() {
     sudo k3d cluster create p3 \
         -p "$ARGOCD_PORT:80@loadbalancer" \
-        -p "$PLAYGROUND_PORT:8888@loadbalancer"
+        -p "$PLAYGROUND_PORT:8888@loadbalancer" \
+        -p "$GITLAB_PORT:8081@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     sudo kubectl create namespace gitlab
@@ -96,7 +97,7 @@ install_gitlab() {
     --namespace gitlab \
     --timeout 600s \
     --set global.hosts.domain=$GITLAB_HOSTNAME \
-    --set global.hosts.externalIP=10.10.10.10 \
+    --set global.hosts.externalIP=127.0.0.1 \
     --set certmanager-issuer.email=me@$GITLAB_HOSTNAME
 
     echo "✅ Installed GitLab."
@@ -107,11 +108,11 @@ check_gitlab_is_ready() {
 
     while true; do
         number_of_pods=$(sudo kubectl get pods -n gitlab | awk '{print $3}' | grep "Running" | wc -l)
-        if [ $number_of_pods = "5" ]; then
+        if [ $number_of_pods = "20" ]; then
             echo "✅ GitLab server is ready."
             break
         fi
-        echo "$number_of_pods/5 pods are running ..."
+        echo "$number_of_pods/20 pods are running ..."
         sleep 5
     done
 }
@@ -148,5 +149,7 @@ display_help
 install_gitlab
 
 check_gitlab_is_ready
+
+create_gitlab_ingress
 
 display_gitlab_help
