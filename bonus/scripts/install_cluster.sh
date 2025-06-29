@@ -159,6 +159,9 @@ install_gitlab
 
 check_gitlab_is_ready
 
-create_gitlab_ingress
+# create_gitlab_ingress
+# now ingress doesn't work, so we use port-forwarding
+# sudo kubectl port-forward svc/gitlab-webservice-default -n gitlab 8083:8080
+# Although we can access GitLab via port-forwarding, we have this error while loging in "422: The change you requested was rejected"
 
 display_gitlab_help
