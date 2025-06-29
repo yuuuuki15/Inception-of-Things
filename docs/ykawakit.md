@@ -101,3 +101,6 @@ Details:
 sudo apt install -y net-tools
 ```
 we can use `ifconfig` to check network interfaces and their configurations. path: "/sbin/ifconfig"
+
+### Checking network ports
+sudo netstat -tulpn
