@@ -90,6 +90,8 @@ connect_to_argocd() {
     argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$ARGOCD_PORT
 }
 
+# doc: https://docs.gitlab.com/charts/installation/deployment/
+# doc: https://docs.gitlab.com/charts/charts/globals/#configure-host-settings
 install_gitlab() {
     helm repo add gitlab https://charts.gitlab.io/
     helm repo update
