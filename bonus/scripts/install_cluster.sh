@@ -9,13 +9,13 @@ ARGOCD_PORT=8080
 PLAYGROUND_PORT=8888
 
 GITLAB_HOSTNAME=gitlab.local
-GITLAB_PORT=8081
+GITLAB_PORT=8082
 
 create_k3d_cluster() {
     sudo k3d cluster create p3 \
         -p "$ARGOCD_PORT:80@loadbalancer" \
         -p "$PLAYGROUND_PORT:8888@loadbalancer" \
-        -p "$GITLAB_PORT:8081@loadbalancer"
+        -p "$GITLAB_PORT:8082@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     sudo kubectl create namespace gitlab
@@ -98,7 +98,16 @@ install_gitlab() {
     --timeout 600s \
     --set global.hosts.domain=$GITLAB_HOSTNAME \
     --set global.hosts.externalIP=127.0.0.1 \
-    --set certmanager-issuer.email=me@$GITLAB_HOSTNAME
+    --set certmanager-issuer.email=me@$GITLAB_HOSTNAME \
+    --set gitlab-runner.install=false \
+    --set global.edition=ce \
+    --set postgresql.resources.requests.cpu=200m \
+    --set postgresql.resources.requests.memory=256Mi \
+    --set redis.resources.requests.cpu=100m \
+    --set redis.resources.requests.memory=128Mi \
+    --set global.minio.resources.requests.memory=128Mi \
+    --set global.webservice.minReplicas=1 \
+    --set global.webservice.maxReplicas=1
 
     echo "✅ Installed GitLab."
 }
@@ -126,7 +135,7 @@ create_gitlab_ingress() {
 }
 
 display_gitlab_help() {
-    gitlab_password=$(sudo kubectl -n gitlab get secret gitlab-initial-root-password -o jsonpath="{.data.password}" | base64 -d)
+    gitlab_password=$(sudo kubectl -n gitlab get secret gitlab-gitlab-initial-root-password -o jsonpath="{.data.password}" | base64 -d)
 
     echo -e "In order to access the GitLab server UI:
 
