@@ -5,7 +5,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-    name: wil-playground-app
+    name: test-app
     namespace: argocd
 spec:
     # The project the application belongs to.
@@ -13,13 +13,12 @@ spec:
     # Source of the application manifests
     source:
         repoURL: https://github.com/yuuuuki15/playground.git
-        targetRevision: HEAD # For Helm, this refers to the chart version.
+        targetRevision: test # For Helm, this refers to the chart version.
         path: manifests
-        directory:
-            recurse: true
     # Destination cluster and namespace to deploy the application
     destination:
         server: https://kubernetes.default.svc
+        # name: in-cluster
         namespace: dev
     # Sync policy
     syncPolicy:
