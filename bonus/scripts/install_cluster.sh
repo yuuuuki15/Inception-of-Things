@@ -5,17 +5,17 @@
 set -e
 
 ARGOCD_HOSTNAME=argocd.local
-ARGOCD_PORT=8080
+PORT=8080
 PLAYGROUND_PORT=8888
 
 GITLAB_HOSTNAME=gitlab.local
-GITLAB_PORT=8082
+CERT_DIR=./certs
+SECRET_NAME=gitlab-tls
 
 create_k3d_cluster() {
     sudo k3d cluster create p3 \
-        -p "$ARGOCD_PORT:80@loadbalancer" \
-        -p "$PLAYGROUND_PORT:8888@loadbalancer" \
-        -p "$GITLAB_PORT:8082@loadbalancer"
+        -p "$PORT:80@loadbalancer" \
+        -p "8888:$PLAYGROUND_PORT@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     sudo kubectl create namespace gitlab
@@ -68,7 +68,7 @@ display_help() {
 
     echo -e "In order to access the server UI:
 
-    1. Open the browser on http://$ARGOCD_HOSTNAME:$ARGOCD_PORT
+    1. Open the browser on http://$ARGOCD_HOSTNAME:$PORT
 
     2. Log in with 'admin:$argocd_password'\n\n"
 }
@@ -87,7 +87,7 @@ connect_to_argocd() {
     echo "⌛ Connect to Argo CD server with CLI ..."
     argocd_password=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 
-    argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$ARGOCD_PORT
+    argocd login --plaintext --grpc-web --username admin --password $argocd_password $ARGOCD_HOSTNAME:$PORT
 }
 
 # doc: https://docs.gitlab.com/charts/installation/deployment/
@@ -128,6 +128,27 @@ check_gitlab_is_ready() {
     done
 }
 
+gitlab_certificates() {
+    echo "⌛ Generate self-signed certificates for GitLab ..."
+    sudo mkdir -p $CERT_DIR
+    rm -rf $CERT_DIR/gitlab.key $CERT_DIR/gitlab.crt
+    sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+        -keyout $CERT_DIR/gitlab.key \
+        -out $CERT_DIR/gitlab.crt \
+        -subj "/O=LocalGitLab/CN=$GITLAB_HOSTNAME"
+    echo "✅ Generated self-signed certificates for GitLab."
+
+    # === DELETE EXISTING SECRET (IF ANY) ===
+    sudo kubectl delete secret "$SECRET_NAME" -n gitlab --ignore-not-found
+    # === CREATE SECRET WITH CERTIFICATES ===
+    sudo kubectl create secret tls "$SECRET_NAME" \
+        --cert=$CERT_DIR/gitlab.crt \
+        --key=$CERT_DIR/gitlab.key \
+        -n gitlab
+
+    echo "✅ TLS certificate and key created for GitLab."
+}
+
 create_gitlab_ingress() {
     sudo kubectl apply -f ./manifests/gitlab_ingress.yaml --namespace gitlab
     # Add hostname to hosts
@@ -141,7 +162,7 @@ display_gitlab_help() {
 
     echo -e "In order to access the GitLab server UI:
 
-    1. Open the browser on http://$GITLAB_HOSTNAME:$GITLAB_PORT
+    1. Open the browser on http://$GITLAB_HOSTNAME:$PORT
 
     2. Log in with 'root:$gitlab_password'\n\n"
 }
@@ -161,7 +182,9 @@ install_gitlab
 
 check_gitlab_is_ready
 
-# create_gitlab_ingress
+gitlab_certificates
+
+create_gitlab_ingress
 # now ingress doesn't work, so we use port-forwarding
 # sudo kubectl port-forward svc/gitlab-webservice-default -n gitlab 8083:8080
 # Although we can access GitLab via port-forwarding, we have this error while loging in "422: The change you requested was rejected"
