@@ -98,18 +98,19 @@ install_gitlab() {
     helm upgrade --install gitlab gitlab/gitlab \
     --namespace gitlab \
     --timeout 600s \
+    --set global.edition=ce \
     --set global.hosts.domain=$GITLAB_HOSTNAME \
-    --set global.hosts.externalIP=127.0.0.1 \
+    --set global.hosts.externalIP=10.10.10.10 \
     --set certmanager-issuer.email=me@$GITLAB_HOSTNAME \
     --set gitlab-runner.install=false \
     --set global.edition=ce \
-    --set postgresql.resources.requests.cpu=200m \
-    --set postgresql.resources.requests.memory=256Mi \
-    --set redis.resources.requests.cpu=100m \
-    --set redis.resources.requests.memory=128Mi \
-    --set global.minio.resources.requests.memory=128Mi \
-    --set global.webservice.minReplicas=1 \
-    --set global.webservice.maxReplicas=1
+    # --set postgresql.resources.requests.cpu=200m \
+    # --set postgresql.resources.requests.memory=256Mi \
+    # --set redis.resources.requests.cpu=100m \
+    # --set redis.resources.requests.memory=128Mi \
+    # --set global.minio.resources.requests.memory=128Mi \
+    # --set global.webservice.minReplicas=1 \
+    # --set global.webservice.maxReplicas=1
 
     echo "✅ Installed GitLab."
 }
@@ -152,7 +153,7 @@ gitlab_certificates() {
 create_gitlab_ingress() {
     sudo kubectl apply -f ./manifests/gitlab_ingress.yaml --namespace gitlab
     # Add hostname to hosts
-    echo "127.0.0.1 $GITLAB_HOSTNAME" | sudo tee -a /etc/hosts
+    echo "10.10.10.10 $GITLAB_HOSTNAME" | sudo tee -a /etc/hosts
 
     echo "✅ Setup Ingress for GitLab."
 }
@@ -182,7 +183,7 @@ install_gitlab
 
 check_gitlab_is_ready
 
-gitlab_certificates
+# gitlab_certificates
 
 create_gitlab_ingress
 # now ingress doesn't work, so we use port-forwarding
