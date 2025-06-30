@@ -5,7 +5,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-    name: test-app
+    name: wil-playground-app
     namespace: argocd
 spec:
     # The project the application belongs to.
@@ -13,7 +13,7 @@ spec:
     # Source of the application manifests
     source:
         repoURL: https://github.com/yuuuuki15/playground.git
-        targetRevision: test # For Helm, this refers to the chart version.
+        targetRevision: HEAD # For Helm, this refers to the chart version.
         path: manifests
     # Destination cluster and namespace to deploy the application
     destination:

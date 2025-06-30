@@ -6,13 +6,11 @@ set -e
 
 ARGOCD_HOSTNAME=argocd.local
 ARGOCD_CONFIG_PATH=manifests/argocd
-PORT=8080
-PLAYGROUND_PORT=8888
+PORT=8888
 
 create_k3d_cluster() {
     sudo k3d cluster create p3 \
-        -p "$PORT:80@loadbalancer" \
-        -p "$PLAYGROUND_PORT:$PLAYGROUND_PORT@loadbalancer"
+        -p "$PORT:80@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     echo "✅ Created k3d cluster."
@@ -65,6 +63,9 @@ install_web_app(){
     echo "⌛ Create Argo CD 'development' project and 'playground' application."
     sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_projects.yaml
     sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_apps.yaml
+    sudo kubectl apply -f ./manifests/playground_ingress.yaml
+
+    echo "✅ Setup application."
 }
 
 display_help() {
