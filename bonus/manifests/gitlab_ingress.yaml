@@ -6,10 +6,6 @@ metadata:
     annotations:
         ingress.kubernetes.io/ssl-redirect: "false"
 spec:
-    tls:
-        -hosts:
-            - gitlab.local
-        secretName: gitlab-tls
     rules:
         - host: gitlab.local
           http:
