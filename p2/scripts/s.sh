@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "[INFO]  setting up k3s server"
 sudo apt update -y
-sudo apt install -y curl
+sudo apt install -y curl net-tools
 
 echo "[INFO]  installing k3s server"
 export INSTALL_K3S_EXEC="server --flannel-iface=eth1 --write-kubeconfig-mode 644"
@@ -11,10 +11,17 @@ echo "[INFO]  k3s server installed"
 echo 'alias k="kubectl"' | sudo tee /etc/profile.d/k3s-aliases.sh
 sudo chmod +x /etc/profile.d/k3s-aliases.sh
 
-sudo apt install -y net-tools
-export PATH=${PATH}:/sbin
+echo "[INFO]  installing helm"
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+echo "[INFO]  helm installed"
 
-echo "PATH=$PATH" >> /etc/profile.d/k3s-path.sh
+export PATH=${PATH}:/sbin
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+echo "PATH=$PATH" >> /etc/profile.d/k3s-env.sh
+echo "KUBECONFIG=$KUBECONFIG" >> /etc/profile.d/k3s-env.sh
 
 # setting ufw
 echo "[INFO]  Setting up firewall rules for k3s"
@@ -29,6 +36,11 @@ sudo ufw deny in on eth0 to any port 8472
 sudo ufw --force enable
 sudo ufw reload
 echo "[INFO]  Firewall configured"
+
+# create namespace
+echo "[INFO]  setting up namespace"
+kubectl apply -f /vagrant/confs/namespace.yaml
+echo "[INFO]  namespace set up"
 
 # set up deployment
 echo "[INFO]  setting up deployment"

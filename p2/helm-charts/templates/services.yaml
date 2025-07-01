@@ -1,0 +1,14 @@
+{{- range .Values.apps }}
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .name }}-svc
+    namespace: {{ $.Values.namespace }}
+spec:
+    ports:
+        - port: {{ .servicePort }}
+          targetPort: {{ .containerPort }}
+    selector:
+        app.kubernetes.io/name: {{ .name }}
+---
+{{- end }}

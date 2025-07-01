@@ -1,0 +1,26 @@
+{{- range .Values.apps }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .name }}
+    namespace: {{ $.Values.namespace }}
+spec:
+    replicas: {{ .replicas }}
+    selector:
+        matchLabels:
+            app.kubernetes.io/name: {{ .name }}
+    template:
+        metadata:
+            labels:
+                app.kubernetes.io/name: {{ .name }}
+        spec:
+            containers:
+                - name: {{ $.Values.container.name }}
+                  image: {{ $.Values.container.image }}
+                  ports:
+                    - containerPort: {{ .containerPort }}
+                  env:
+                    - name: MESSAGE
+                      value: {{ .message }}
+---
+{{- end}}
