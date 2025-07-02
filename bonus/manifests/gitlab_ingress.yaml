@@ -5,7 +5,13 @@ metadata:
     namespace: gitlab
     annotations:
         ingress.kubernetes.io/ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 spec:
+    tls:
+        - hosts:
+            - gitlab.local
+          secretName: gitlab-tls
     rules:
         - host: gitlab.local
           http:

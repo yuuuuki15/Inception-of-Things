@@ -106,14 +106,10 @@ install_gitlab() {
     --set global.hosts.externalIP=127.0.0.1 \
     --set certmanager-issuer.email=me@$GITLAB_HOSTNAME \
     --set gitlab-runner.install=false \
-    --set global.edition=ce \
-    # --set postgresql.resources.requests.cpu=200m \
-    # --set postgresql.resources.requests.memory=256Mi \
-    # --set redis.resources.requests.cpu=100m \
-    # --set redis.resources.requests.memory=128Mi \
-    # --set global.minio.resources.requests.memory=128Mi \
-    # --set global.webservice.minReplicas=1 \
-    # --set global.webservice.maxReplicas=1
+    --set gitlab.webservice.workhorse.tls.enabled=false \
+    --set global.hosts.https=false \
+    --set global.ingress.configureCertmanager=false \
+    --set global.ingress.tls.enabled=false
 
     echo "✅ Installed GitLab."
 }
