@@ -56,3 +56,8 @@ echo "[INFO]  service set up"
 echo "[INFO]  setting up ingress"
 kubectl apply -f /vagrant/confs/ingress.yaml
 echo "[INFO]  ingress set up"
+
+
+# If you want to use Helm instead of kubectl + manifests,
+# change your working directory to `p2` and run:
+# helm install part2 helm-charts/part2/

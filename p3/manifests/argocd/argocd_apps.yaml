@@ -18,7 +18,6 @@ spec:
     # Destination cluster and namespace to deploy the application
     destination:
         server: https://kubernetes.default.svc
-        # name: in-cluster
         namespace: dev
     # Sync policy
     syncPolicy:
