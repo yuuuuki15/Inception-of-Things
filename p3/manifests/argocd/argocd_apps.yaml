@@ -12,7 +12,7 @@ spec:
     project: development
     # Source of the application manifests
     source:
-        repoURL: https://github.com/yuuuuki15/playground.git
+        repoURL: https://github.com/yuuuuki15/ykawakit_playground.git
         targetRevision: HEAD # For Helm, this refers to the chart version.
         path: manifests
     # Destination cluster and namespace to deploy the application
