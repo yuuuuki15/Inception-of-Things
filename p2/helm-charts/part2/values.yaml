@@ -2,7 +2,8 @@ namespace: p2
 
 container:
   name: hello-kubernetes
-  image: paulbouwer/hello-kubernetes:1.10
+  image: paulbouwer/hello-kubernetes
+  tag: "1.10"
 
 apps:
   - name: app1

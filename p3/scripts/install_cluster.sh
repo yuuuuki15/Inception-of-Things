@@ -69,13 +69,10 @@ install_web_app(){
 }
 
 display_help() {
-    argocd_password=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-
-    echo -e "In order to access the server UI:
+    echo "In order to access the server UI:
 
     1. Open the browser on http://$ARGOCD_HOSTNAME:$PORT
-
-    2. Log in with 'admin' as username and ask the password to the students. :)\n\n"
+    2. Log in with 'admin' as username and ask the password to the students. :)\n"
 }
 
 install_argocd_cli(){
