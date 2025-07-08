@@ -44,6 +44,9 @@ install_argocd(){
             "admin.passwordMtime": "'$(date +%FT%T%Z)'"
         }}'
 
+    # Add hostname to hosts
+    echo "127.0.0.1 $ARGOCD_HOSTNAME" | sudo tee -a /etc/hosts
+
     echo "✅ Installed Argo CD."
 }
 
@@ -64,8 +67,6 @@ check_argocd_is_ready() {
 
 create_argocd_ingress() {
     sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_ingress.yaml --namespace argocd
-    # Add hostname to hosts
-    echo "127.0.0.1 $ARGOCD_HOSTNAME" | sudo tee -a /etc/hosts
 
     echo "✅ Setup Ingress for Argo CD."
 }
@@ -118,6 +119,15 @@ install_gitlab() {
         --set prometheus.install=false \
         --set registry.enabled=false
 
+    # Add hostname to hosts
+    echo "127.0.0.1 $GITLAB_HOSTNAME" | sudo tee -a /etc/hosts
+
+    echo """Host ssh.gitlab.iot.local
+User git
+Port 8888
+
+    """ >> ~/.ssh/config
+
     echo "✅ Installed GitLab."
 }
 
@@ -151,14 +161,6 @@ check_gitlab_is_ready() {
 
 create_gitlab_ingress() {
     sudo kubectl apply -f ./$MANIFESTS_PATH/gitlab_ingress.yaml --namespace gitlab
-    # Add hostname to hosts
-    echo "127.0.0.1 $GITLAB_HOSTNAME" | sudo tee -a /etc/hosts
-
-    echo """Host ssh.gitlab.iot.local
-User git
-Port 8888
-
-    """ >> ~/.ssh/config
 
     echo "✅ Setup Ingress for GitLab."
 }
