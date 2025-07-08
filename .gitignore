@@ -1,7 +1,5 @@
 */.vagrant/machines/*
-p1/shared/*
-p2/shared/node-token
-rgloader
+shared/
 
 # Environments
 .env
