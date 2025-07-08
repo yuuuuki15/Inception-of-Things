@@ -40,7 +40,14 @@ install_argocd(){
             "admin.passwordMtime": "'$(date +%FT%T%Z)'"
         }}'
 
+    # Add hostname to hosts
+    echo "127.0.0.1 $ARGOCD_HOSTNAME" | sudo tee -a /etc/hosts
+
     echo "✅ Installed Argo CD."
+
+    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_ingress.yaml --namespace argocd
+
+    echo "✅ Setup Ingress for Argo CD."
 }
 
 check_argocd_is_ready() {
@@ -48,22 +55,16 @@ check_argocd_is_ready() {
 
     while true; do
         expected_pods_count=$(sudo kubectl get pods -n argocd --no-headers | wc -l)
-        functional_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running" | wc -l)
+        functional_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running\|Completed" | wc -l)
+
+        echo "$functional_pods/$expected_pods_count pods are running ..."
         if [ $functional_pods = $expected_pods_count ]; then
-            echo "✅ Argo CD server is ready."
             break
         fi
-        echo "$functional_pods/$expected_pods_count pods are running ..."
         sleep 5
     done
-}
 
-create_argocd_ingress() {
-    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_ingress.yaml --namespace argocd
-    # Add hostname to hosts
-    echo "127.0.0.1 $ARGOCD_HOSTNAME" | sudo tee -a /etc/hosts
-
-    echo "✅ Setup Ingress for Argo CD."
+    echo "✅ Argo CD server is ready."
 }
 
 install_web_app(){
@@ -89,6 +90,5 @@ create_k3d_cluster
 ############### Argo CD ###############
 install_argocd
 check_argocd_is_ready
-create_argocd_ingress
 install_web_app
 display_argocd_help

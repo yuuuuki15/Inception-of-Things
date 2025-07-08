@@ -48,6 +48,10 @@ install_argocd(){
     echo "127.0.0.1 $ARGOCD_HOSTNAME" | sudo tee -a /etc/hosts
 
     echo "✅ Installed Argo CD."
+
+    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_ingress.yaml --namespace argocd
+
+    echo "✅ Setup Ingress for Argo CD."
 }
 
 check_argocd_is_ready() {
@@ -56,19 +60,15 @@ check_argocd_is_ready() {
     while true; do
         expected_pods_count=$(sudo kubectl get pods -n argocd --no-headers | wc -l)
         functional_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running\|Completed" | wc -l)
+
+        echo "$functional_pods/$expected_pods_count pods are running ..."
         if [ $functional_pods = $expected_pods_count ]; then
-            echo "✅ Argo CD server is ready."
             break
         fi
-        echo "$functional_pods/$expected_pods_count pods are running ..."
         sleep 5
     done
-}
 
-create_argocd_ingress() {
-    sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_ingress.yaml --namespace argocd
-
-    echo "✅ Setup Ingress for Argo CD."
+    echo "✅ Argo CD server is ready."
 }
 
 install_web_app(){
@@ -129,6 +129,10 @@ Port 8888
     """ >> ~/.ssh/config
 
     echo "✅ Installed GitLab."
+
+    sudo kubectl apply -f ./$MANIFESTS_PATH/gitlab_ingress.yaml --namespace gitlab
+
+    echo "✅ Setup Ingress for GitLab."
 }
 
 check_gitlab_is_ready() {
@@ -138,11 +142,11 @@ check_gitlab_is_ready() {
         expected_pods_count=$(sudo kubectl get pods -n gitlab --no-headers | wc -l)
         functional_pods=$(sudo kubectl get pods -n gitlab | awk '{print $3}' | grep "Running\|Completed" | wc -l)
 
+        echo "$functional_pods/$expected_pods_count pods are running ..."
         if [ $functional_pods = $expected_pods_count ]; then
             break
         fi
-        echo "$functional_pods/$expected_pods_count pods are running ..."
-        sleep 5
+        sleep 8
     done
 
     while true; do
@@ -157,12 +161,6 @@ check_gitlab_is_ready() {
     done
 
     echo "✅ GitLab is ready."
-}
-
-create_gitlab_ingress() {
-    sudo kubectl apply -f ./$MANIFESTS_PATH/gitlab_ingress.yaml --namespace gitlab
-
-    echo "✅ Setup Ingress for GitLab."
 }
 
 display_gitlab_help() {
@@ -181,12 +179,10 @@ create_k3d_cluster
 ############### Argo CD ###############
 install_argocd
 check_argocd_is_ready
-create_argocd_ingress
 install_web_app
 display_argocd_help
 
 ############## GitLab ###############
 install_gitlab
 check_gitlab_is_ready
-create_gitlab_ingress
 display_gitlab_help
