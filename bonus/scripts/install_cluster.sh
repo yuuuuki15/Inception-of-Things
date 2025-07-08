@@ -35,7 +35,7 @@ install_argocd(){
         --namespace argocd \
         --set server.ingress.enabled=true \
         --set configs.params."server\.insecure"=true \
-        -f ./$ARGOCD_CONFIG_PATH/argocd-values.yaml
+        -f ./$ARGOCD_CONFIG_PATH/argocd_values.yaml
 
     # Update admin password
     sudo kubectl -n argocd patch secret argocd-secret \
@@ -52,7 +52,7 @@ check_argocd_is_ready() {
 
     while true; do
         expected_pods_count=$(sudo kubectl get pods -n argocd --no-headers | wc -l)
-        functional_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running" | wc -l)
+        functional_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running\|Completed" | wc -l)
         if [ $functional_pods = $expected_pods_count ]; then
             echo "✅ Argo CD server is ready."
             break
