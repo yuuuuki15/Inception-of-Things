@@ -1,20 +1,26 @@
 #!/bin/bash
-# Install k3d cluster and Argo CD using Helm
+# Installation script for part 3
+# Setup k3d cluster and install Argo CD using Helm
 
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+HOST_PORT=8888
+MANIFESTS_PATH=manifests
+
 ARGOCD_HOSTNAME=argocd.local
-ARGOCD_CONFIG_PATH=manifests/argocd
-PORT=8888
+ARGOCD_CONFIG_PATH=$MANIFESTS_PATH/argocd
+
+################################# Kubernetes ###################################
 
 create_k3d_cluster() {
-    sudo k3d cluster create p3 \
-        -p "$PORT:80@loadbalancer"
+    sudo k3d cluster create p3 -p "$HOST_PORT:80@loadbalancer"
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
     echo "✅ Created k3d cluster."
 }
+
+################################### Argo CD ####################################
 
 install_argocd(){
     # Add Argo CD Helm repository
@@ -25,7 +31,7 @@ install_argocd(){
         --namespace argocd \
         --set server.ingress.enabled=true \
         --set configs.params."server\.insecure"=true \
-        -f ./$ARGOCD_CONFIG_PATH/argocd-values.yaml
+        -f ./$ARGOCD_CONFIG_PATH/argocd_values.yaml
 
     # Update admin password
     sudo kubectl -n argocd patch secret argocd-secret \
@@ -41,12 +47,13 @@ check_argocd_is_ready() {
     echo "⌛ Wait for Argo CD pods to be running ..."
 
     while true; do
-        number_of_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running" | wc -l)
-        if [ $number_of_pods = "7" ]; then
+        expected_pods_count=$(sudo kubectl get pods -n argocd --no-headers | wc -l)
+        functional_pods=$(sudo kubectl get pods -n argocd | awk '{print $3}' | grep "Running" | wc -l)
+        if [ $functional_pods = $expected_pods_count ]; then
             echo "✅ Argo CD server is ready."
             break
         fi
-        echo "$number_of_pods/7 pods are running ..."
+        echo "$functional_pods/$expected_pods_count pods are running ..."
         sleep 5
     done
 }
@@ -63,34 +70,25 @@ install_web_app(){
     echo "⌛ Create Argo CD 'development' project and 'playground' application."
     sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_projects.yaml
     sudo kubectl apply -f ./$ARGOCD_CONFIG_PATH/argocd_apps.yaml
-    sudo kubectl apply -f ./manifests/playground_ingress.yaml
+    sudo kubectl apply -f ./$MANIFESTS_PATH/playground_ingress.yaml
 
     echo "✅ Setup application."
 }
 
-display_help() {
+display_argocd_help() {
     echo "In order to access the server UI:
 
-    1. Open the browser on http://$ARGOCD_HOSTNAME:$PORT
-    2. Log in with 'admin' as username and ask the password to the students. :)\n"
+    1. Open the browser on http://$ARGOCD_HOSTNAME:$HOST_PORT
+    2. Log in with 'admin' as username and ask the password to the evaluated students. :)\n"
 }
 
-install_argocd_cli(){
-    argocd_version=v3.0.6
-    echo "⌛ Downloading Argo CD command-line tool ..."
-    curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/download/$argocd_version/argocd-linux-amd64
-    sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-    rm argocd-linux-amd64
-
-    echo "✅ Installed Argo CD CLI."
-}
+################################################################################
 
 create_k3d_cluster
+
+############### Argo CD ###############
 install_argocd
-# Wait for Argo CD server to be ready
 check_argocd_is_ready
-# Create Ingress to access Argo CD UI
 create_argocd_ingress
-# Install playground web application
 install_web_app
-display_help
+display_argocd_help
