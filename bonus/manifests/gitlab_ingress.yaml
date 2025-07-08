@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: gitlab-ingress
+    namespace: gitlab
+    annotations:
+        ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+    rules:
+        - host: gitlab.iot.local
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: gitlab-webservice-default
+                        port:
+                            number: 8181
+        - host: ssh.gitlab.iot.local
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: gitlab-gitlab-shell
+                        port:
+                            number: 2222

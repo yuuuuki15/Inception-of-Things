@@ -1,0 +1,18 @@
+# This is a Kubernetes Custom Resource of kind "AppProject", defined
+# by Argo CD via a CRD (Custom Resource Definition).
+# It is used to group and manage related Argo CD Applications, setting
+# policies, destinations, and source repos.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+    name: development
+    namespace: argocd
+spec:
+    description: Deploy playground applications
+    sourceRepos:
+        - https://github.com/yuuuuki15/*
+    # Only permit applications to deploy to the 'dev' namespace
+    destinations:
+        - name: in-cluster
+          namespace: dev
+          server: https://kubernetes.default.svc
