@@ -1,0 +1,20 @@
+# Custom Kubernetes DNS configuration (kube-system/coredns-custom ConfigMap)
+# You must get the pod IP address, apply and reload the deployment:
+# kubectl apply -f coredns-custom.yaml -n kube-system
+# kubectl rollout restart deployment coredns -n kube-system
+# https://coredns.io/plugins/hosts/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: coredns-custom
+    namespace: kube-system
+data:
+    gitlab.server: |
+        iot.local:53 {
+            hosts {
+              <IP> gitlab.iot.local
+            }
+            prometheus :9153
+            forward . /etc/resolv.conf
+            loop
+        }

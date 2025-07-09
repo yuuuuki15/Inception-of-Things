@@ -97,7 +97,7 @@ install_gitlab() {
     helm upgrade --install gitlab gitlab/gitlab \
         --timeout 600s \
         --namespace gitlab \
-        --set certmanager.install=false \
+        --set installCertmanager=false \
         --set gitlab-runner.install=false \
         --set gitlab.gitlab-shell.service.type=ClusterIP \
         --set gitlab.gitlab-shell.service.port=2222 \
@@ -140,7 +140,7 @@ check_gitlab_is_ready() {
 
     while true; do
         expected_pods_count=$(sudo kubectl get pods -n gitlab --no-headers | wc -l)
-        functional_pods=$(sudo kubectl get pods -n gitlab | awk '{print $3}' | grep "Running\|Completed" | wc -l)
+        functional_pods=$(sudo kubectl get pods -n gitlab | awk '{print $3}' | grep "Running\|Completed\|Pending" | wc -l)
 
         echo "$functional_pods/$expected_pods_count pods are running ..."
         if [ $functional_pods = $expected_pods_count ]; then

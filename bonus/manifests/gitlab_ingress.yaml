@@ -17,13 +17,3 @@ spec:
                         name: gitlab-webservice-default
                         port:
                             number: 8181
-        - host: ssh.gitlab.iot.local
-          http:
-            paths:
-                - path: /
-                  pathType: Prefix
-                  backend:
-                    service:
-                        name: gitlab-gitlab-shell
-                        port:
-                            number: 2222
